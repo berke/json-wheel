@@ -30,7 +30,12 @@
       else json_error (s ^ " is too large for OCaml's type int, sorry")
 
   let utf8_of_point i =
-    Netconversion.ustring_of_uchar `Enc_utf8 i
+    try
+      Netconversion.ustring_of_uchar `Enc_utf8 i
+    with
+    | Failure _ ->
+        (* Conversion failure.  Keep in escaped form *)
+        sprintf "\\u%04x" i
 
   let custom_error descr lexbuf =
     json_error 
